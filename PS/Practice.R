@@ -1,107 +1,86 @@
-x <- matrix(c(1, 2, 34, 4, 5, 67, 9 ,8, 7), 3, 3)
-row.names(x) <- c("Jan", "Feb", "Mar")
-colnames(x) <- c("Jan", "Feb", "Mar")
+library(ISLR)
+dat <- Smarket
+par(mfrow = c(1,2))
+plot(1:1250, dat[,3], type = 'l') # Line plot for previous 2 yrs
+plot(1:242, dat[1:242,3], type = 'l')
 
-x[c("Jan":"Mar"),"Feb"]
-
-x <- matrix(c(1, 2, 34, 4, 5, 67, 9 ,8, 7), 3, 3)
-b <- c(2, 3, 4)
-
-solve(x, b)
 
 library(matlib)
+A <- matrix(c(1,-2,-1,2,3,2,3,-2,1), nrow = 3, ncol = 3)
+A
+b <- c(6, -1, 2)
+b
+Solve(A, b)
+plotEqn3d(A,b, xlim=c(0,4), ylim=c(0,4))
 
-Solve(x,b)
-showEqn(x, b)
-plotEqn3d(x, b)
-
-echelon(x, b, verbose = TRUE)
-
-##################################################
-
-library(mvtnorm)
-library(ggplot2)
-library(matlib)
-
-set.seed(123)
-mu <- c(1, 2)
-sigma <- matrix(c(4, 2, 2, 3), 2, 2)
-samp <- rmvnorm(1e3, mean = mu, sigma = sigma)
-E <- eigen(sigma)
-sigma_root <- (E$vectors) %*% diag(c((E$values)^(-0.5))) %*% t(E$vectors)
-
-rotated <- array(0, dim = dim(samp))
-for(i in 1:1e3)
-{
-  rotated[i, ] <- sigma_root %*% (samp[i, ] - mu)
-}
-
-data <- as.data.frame(rotated)
-p <- ggplot(data, aes(x = V1, y = V2)) + geom_point() + geom_density2d()
-p
-
-#################################################
-
-library(pracma)
-
-A <- matrix(c(1, 3, 2, 1, 2, 5, -2, -3, 2, 2, -3, -3, -4, -2, -1, 4), nrow = 4, ncol = 4, byrow=TRUE)
-M <- cbind(A, diag(1, 4, 4))
-R <- rref(M)
-inv(A)
-
-#################################################
-
+diag(4)
 A <- matrix(c(0, 1, 3, -1, -1, 1, -4, 0, 1, 0, 2, 4, 0, 1, 0, -4), 
             nrow = 4, ncol = 4, byrow = TRUE)
+AI <- rowadd(A, 1, 2, -2)
 
-rowadd(A, 1, 2, 6)
+df <- USArrests
+df <- na.omit(df)
+df <- scale(df)
+d <- dist(df, method = "euclidean")
 
-#################################################
+## Example 98
+library(rgl)
+library(ggplot2)
+# Create some dummy data
+dat <- replicate(2, 1:3)
+# Initialize the scene, no data plotted
+plot3d(dat, type = 'n', xlim = c(-1, 8), ylim = c(-1, 8), zlim = c(-10, 20), xlab = '', ylab = '', zlab = '')
+# Define the linear plane
+planes3d(2, 3, -1, 0, col = 'red', alpha = 0.6)
+# Define the origin
+points3d(x=0, y=0, z=0)
 
-n <- 1e5
-s <- 1:n
-k <- 1/s
-val <- numeric(length = n)
-for(i in 1:n)
-{
-  t <- k[i]
-  A <- matrix(c(t, t^2, t^3, t^2, t^4, t^6, t^3, t^6, t^9), 3, 3, byrow = TRUE)
-  val[i] <- det(A)
-}
+### Practical Applications
 
-plot(k, val)
+library(ISLR)
+data(Auto)
+dim(Auto)
+auto <- Auto[,1:7]
+new.data <- Auto[,1:8]
+summary(auto)
+pc <- prcomp(auto, scale=TRUE)
+plot(pc)
+plot(cumsum(pc$sdev^2/sum(pc$sdev^2)))
+## Need this library
+library(ggfortify)
+autoplot(pc, data=new.data, colour = "origin")
 
-#################################################
 
-x <- c(-1, 1, 1, 3, 1+sqrt(2))
-y <- c(1, -1, 3, 1, 1+sqrt(2))
+#### 4_1
+library(rgl)
+dat <- replicate(2,1:3)
+plot3d(dat, type = 'n', xlim = c(-8,8), ylim = c(-8,8), zlim = c(-8,8))
+planes3d(1,1,1,0, col= 'purple',alpha = 0.6 )
+points3d(x = 0,y = 0, z = 0)
 
-M <- matrix(0, 5, 6)
+plot3d(dat, type = 'n', xlim = c(-8,8), ylim = c(-8,8), zlim = c(-8,8))
+planes3d(2,1,-1,0, col= 'purple',alpha = 0.6 )
+points3d(x = 0,y = 0, z = 0)
 
-for(i in 1:5)
-{
-  M[i, 1] <- x[i]*x[i]
-  M[i, 2] <- x[i]*y[i]
-  M[i, 3] <- y[i]*y[i]
-  M[i, 4] <- x[i]
-  M[i, 5] <- y[i]
-  M[i, 6] <- 1
-}
+plot3d(dat, type = 'n', xlim = c(-8,8), ylim = c(-8,8), zlim = c(-8,8))
+planes3d(-3,2,5,0, col= 'purple',alpha = 0.6 )
+points3d(x = 0,y = 0, z = 0)
 
-a <- det(M[ ,-1])
-b <- -det(M[ ,-2])
-c <- det(M[ ,-3])
-d <- -det(M[ ,-4])
-e <- det(M[ ,-5])
-f <- -det(M[ ,-6])
+plot3d(dat, type = 'n', xlim = c(-8,8), ylim = c(-8,8), zlim = c(-8,8))
+planes3d(1,-1,-1,0, col= 'purple',alpha = 0.6 )
+points3d(x = 0,y = 0, z = 0)
 
-#################################################
+library(MASS)
+A <- matrix(c(1, -1, 4, 2, 0, -1, -1, -1, 5), nrow=3, ncol=3, byrow=TRUE)
+temp <- Null(t(A))
+temp/temp[3]
+library(pracma)
 
-tri <- function(x1, y1, x2, y2, x3, y3)
-{
-  M <- matrix(c(x1, y1, 1, x2, y2, 1, x3, y3, 1), 3, 3, byrow = TRUE)
-  ans <- 0.5*abs(det(M))
-  return (ans)
-}
-
-area <- tri(0, 0, 2, 2, 1, -1) + tri(4, -1, 2, 2, 1, -1) + tri(5, 3, 2, 2, 4, -1) + tri(4, -1, 5, 3, 6, -2)
+# 4_2
+A <- matrix(c(1,-1,1,1,-2,-2,2,-1,2,1,3,2,-3,0,-2,1,4,-4,2,-1), nrow = 4, ncol = 5, byrow = TRUE )
+nullspace(A)
+Null(t(A))
+rref(A)
+orth(t(A))
+t(rref(t(A)))
+orth(A)
